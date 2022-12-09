@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %} 
+
+{% block content %}
+<div class="container mt-5 pt-4">
+    
+  <div class="col-10 mx-auto">
+      <h3 class="text-center">Fill!DL-form</h3>
+      <form action="" method="post" novalidate>
+        {% csrf_token %}
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            {{form.first_name|as_crispy_field}}
+          </div>
+
+          <div class="form-group col-md-6">
+            {{form.last_name|as_crispy_field}}
+            </div>         
+    
+      <div class="form-group col-md-6">
+        {{form.dob|as_crispy_field}}
+    </div>
+
+    <div class="form-group col-md-6">
+      {{form.place_of_birth|as_crispy_field}}
+    </div>
+  </div>
+    
+  <div class="form-group">
+    {{form.gender|as_crispy_field}}
+  </div>    
+  
+
+        <div class="form-group">
+          {{form.address1|as_crispy_field}}
+        </div>
+        <div class="form-group">
+          {{form.address2|as_crispy_field}}
+        </div>
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            {{form.city|as_crispy_field}}
+          </div>
+          <div class="form-group col-md-4" id="state">
+            {{form.state|as_crispy_field}}
+          </div>
+          <div class="form-group col-md-2">
+            {{form.zipcode|as_crispy_field}}
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="gridCheck">
+            <label class="form-check-label" for="gridCheck">
+              Check me out
+            </label>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Sign in</button>
+      </form>
+  
+  </div>
+</div>
+
+<input name="txtPostalCode" type="text" id="txtPostalCode" />
+<input type="button" value="Get Details" onclick="GetDetails();" />
+<br />
+<table border="0" cellpadding="0" cellspacing="0">
+    <tr>
+        <td>Country:</td>
+        <td><input type="text" id="txtCountry" /></td>
+    </tr>
+    <tr>
+        <td>State:</td>
+        <td><input type="text" id="txtState" /></td>
+    </tr>
+    <tr>
+        <td>City:</td>
+        <td><input type="text" id="txtCity" /></td>
+    </tr>
+</table>
+{% endblock content %}
+
+{% block ajax %}
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=false&key=API_Key"></script>
+<script type="text/javascript">
+    function GetDetails() {
+        var geocoder = new google.maps.Geocoder();
+        var postalCode = document.getElementById("txtPostalCode").value;
+        geocoder.geocode({ 'address': postalCode }, function (results, status) {
+            if (status == google.maps.GeocoderStatus.OK) {
+                var address = results[0].formatted_address;
+                var pin = results[0].address_components[results[0].address_components.length - 1].long_name;
+                var country = results[0].address_components[results[0].address_components.length - 2].long_name;
+                var state = results[0].address_components[results[0].address_components.length - 3].long_name;
+                var city = results[0].address_components[results[0].address_components.length - 4].long_name;
+                document.getElementById('txtCountry').value = country;
+                document.getElementById('txtState').value = state;
+                document.getElementById('txtCity').value = city;
+            }
+        });
+    };
+</script>
+{% endblock ajax %}
+

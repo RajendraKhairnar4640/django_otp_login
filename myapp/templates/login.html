@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% load socialaccount %}
+{% block content %}
+<div class="container mt-5 pt-4">
+    
+    <div class="col-6 mx-auto">
+        <h3 class="text-center">login here..!</h3>
+        <form method="post" >
+            {% csrf_token %}
+
+            {% if message %}
+            <div class="alert alert-{{class}}">
+                {{message}}
+            </div>
+            {% endif %}
+
+            <div class="row">
+                <div class="form-group col-12">
+                    <input type="text" placeholder="mobile" class="form-control" name="mobile_no" id="" required />
+                </div>
+            </div>
+            <button class="btn btn-primary">send-otp</button>
+        </form> <br> <br>
+ 
+         <div class="text-center">
+            <p>Not a member? <a href="{% url 'register' %}">Register</a></p>
+            <p>or sign up with:</p>
+
+            <a href="{% provider_login_url 'facebook' %}"><button type="button" class="btn btn-link btn-floating mx-1" >
+                <i class="fab fa-facebook-f"></i>
+              </button></a>
+
+        
+            <a href="{% provider_login_url 'google' %}"><button type="button" class="btn btn-link btn-floating mx-1" >
+                <i class="fab fa-google"></i>
+              </button></a>
+        
+            <a href="{% provider_login_url 'github' %}"><button type="button" class="btn btn-link btn-floating mx-1" >
+                <i class="fab fa-github"></i>
+              </button></a>
+    
+    </div>
+</div>
+{% endblock content %}
