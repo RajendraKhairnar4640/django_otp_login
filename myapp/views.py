@@ -71,3 +71,6 @@ def driving_licence(request):
         form = DLForm()
     return render(request,'dlform.html',{'form':form})
 
+
+def new(request):
+    return render(request,'new.html')

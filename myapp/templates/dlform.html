@@ -2,6 +2,7 @@
 {% load crispy_forms_tags %} 
 
 {% block content %}
+
 <div class="container mt-5 pt-4">
     
   <div class="col-10 mx-auto">
@@ -60,46 +61,60 @@
       </form>
   
   </div>
+  
 </div>
 
-<input name="txtPostalCode" type="text" id="txtPostalCode" />
-<input type="button" value="Get Details" onclick="GetDetails();" />
-<br />
-<table border="0" cellpadding="0" cellspacing="0">
-    <tr>
-        <td>Country:</td>
-        <td><input type="text" id="txtCountry" /></td>
-    </tr>
-    <tr>
-        <td>State:</td>
-        <td><input type="text" id="txtState" /></td>
-    </tr>
-    <tr>
-        <td>City:</td>
-        <td><input type="text" id="txtCity" /></td>
-    </tr>
-</table>
+
+
+<div class="container">
+  <div class="zipcode">
+      <input type="text" id="zipcode" value="" required>
+      <label for="zipcode">Zip code...</label>
+      <span class="indicator">
+          <i class="ri-close-circle-fill ri icon"></i>
+      </span>
+  </div>
+  <p class="info">Type valid zip code</p>
+  <p class="info2">Show</p>
+
+  </div> 
+
+
 {% endblock content %}
 
-{% block ajax %}
-<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=false&key=API_Key"></script>
-<script type="text/javascript">
-    function GetDetails() {
-        var geocoder = new google.maps.Geocoder();
-        var postalCode = document.getElementById("txtPostalCode").value;
-        geocoder.geocode({ 'address': postalCode }, function (results, status) {
-            if (status == google.maps.GeocoderStatus.OK) {
-                var address = results[0].formatted_address;
-                var pin = results[0].address_components[results[0].address_components.length - 1].long_name;
-                var country = results[0].address_components[results[0].address_components.length - 2].long_name;
-                var state = results[0].address_components[results[0].address_components.length - 3].long_name;
-                var city = results[0].address_components[results[0].address_components.length - 4].long_name;
-                document.getElementById('txtCountry').value = country;
-                document.getElementById('txtState').value = state;
-                document.getElementById('txtCity').value = city;
-            }
-        });
-    };
-</script>
-{% endblock ajax %}
+{% block js %}
+<script>
+  var input = document.querySelector('#zipcode');
+  console.log(input)
+  var indicator = document.querySelector('.ri');
+  var info = document.querySelector('.info');
+  var info2 = document.querySelector('.info2');
 
+  var codelength = /^\d{6}$/
+
+  input.addEventListener('keyup', () => {
+      if (input.value.match(codelength)) {
+          $.ajax({
+              type: "GET",
+              url: "https://api.postalpincode.in/pincode/" + input.value,
+
+              success: (response) => {
+                  info.innerHTML = (response[0].PostOffice[0].Name);
+                  info2.innerHTML = (response[0].PostOffice[0].State);
+
+              }
+          });
+
+          indicator.classList.add('ri-checkbox-circle-fill');
+          indicator.classList.remove('ri-close-circle-fill');
+      }
+
+      else {
+          indicator.classList.add('ri-close-circle-fill');
+          indicator.classList.remove('ri-checkbox-circle-fill');
+          info.innerHTML = "Type valid zipcode";
+      }
+
+  }); 
+</script>
+{% endblock js %}

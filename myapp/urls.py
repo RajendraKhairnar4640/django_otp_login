@@ -9,5 +9,7 @@ urlpatterns = [
     path('logout/',views.user_logout, name='logout'),
 
     path('dl-form/',views.driving_licence, name='dl-form'),
+    path('new/',views.new, name='new'),
+
     # #path('login-otp', login_otp , name="login_otp") 
 ]
