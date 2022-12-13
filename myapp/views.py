@@ -3,12 +3,11 @@ from django.contrib import messages
 from django.contrib.auth.models import User
 from .models import Profile
 import random
-import http.client
 from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
 from .mixin import MessageHandler
 from .forms import DLForm
-
+from django.contrib import messages
 
 # Create your views here.
 def login_view(request):
@@ -65,7 +64,10 @@ def driving_licence(request):
         form = DLForm(request.POST)
         
         if form.is_valid():
-            form.save()
+            form.save()            
+            messages.success(request,'Data submit sucessfully..!')
+            form = DLForm()
+        messages.error(request,'Data not submited..!')
 
     else:
         form = DLForm()

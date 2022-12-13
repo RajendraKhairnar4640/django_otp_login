@@ -1,7 +1,9 @@
 from django import forms
 from django.forms import widgets
 from .models import DirivingLicence
-from django.contrib.admin.widgets import AdminDateWidget
+from crispy_forms.helper import FormHelper, Layout
+from crispy_forms.layout import Layout, Submit, Div
+
 
 
 
@@ -17,5 +19,6 @@ class DLForm(forms.ModelForm):
         'city','state','zipcode']
 
         widgets = {
-            'dob': DateInput()
+            'dob': DateInput(),
         }
+

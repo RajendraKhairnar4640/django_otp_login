@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
 import uuid
+from django_resized import ResizedImageField
+
 
 # Create your models here.
 GENDER_CHOICE = [
@@ -14,7 +16,7 @@ class Profile(models.Model):
     otp = models.CharField(max_length=50, null=True, blank=True)
     uid = models.UUIDField(default=uuid.uuid4)
     
-state_choices = (
+STATE_CHOICE = (
     ("Andhra Pradesh","Andhra Pradesh"),
     ("Arunachal Pradesh ","Arunachal Pradesh "),
     ("Assam","Assam"),
@@ -59,5 +61,6 @@ class DirivingLicence(models.Model):
     address1 = models.CharField(max_length=100)
     address2 = models.CharField(max_length=100)
     city = models.CharField(max_length=50)
-    state = models.CharField(choices=state_choices,max_length=255,null=True, blank=True)
+    state = models.CharField(choices=STATE_CHOICE,max_length=255,null=True, blank=True)
     zipcode = models.IntegerField() 
+    image = ResizedImageField(upload_to='profile_pic',size=[500,300],crop=['middle','center'],force_format='JPEG')

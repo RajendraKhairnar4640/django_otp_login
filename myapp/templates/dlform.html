@@ -1,12 +1,25 @@
 {% extends 'base.html' %}
-{% load crispy_forms_tags %} 
+ {% load crispy_forms_tags %} 
 
-{% block content %}
 
-<div class="container mt-5 pt-4">
+
+ {% block content %}
+ <div class="container mt-5 pt-4">
+  <div class="zipcode">
     
   <div class="col-10 mx-auto">
+    
       <h3 class="text-center">Fill!DL-form</h3>
+      {% for message in messages %}
+    <div class="container-fluid p-0">
+      <div class="alert {{ message.tags }} alert-dismissible" role="alert" style="background-color:#F08080">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="True">&times;</span>
+        </button>
+        {{ message }}
+      </div>
+    </div>
+    {% endfor %}
       <form action="" method="post" novalidate>
         {% csrf_token %}
         <div class="form-row">
@@ -38,16 +51,28 @@
         <div class="form-group">
           {{form.address2|as_crispy_field}}
         </div>
+
+
+
+
+        <div class="zipcode">
+        <div class="form-group col-md-2" id="zipcode">
+          <span class="indicator">
+            <i class="ri-close-circle-fill ri icon">{{form.zipcode|as_crispy_field}}</i>
+        </span>
+          
+        </div>
         <div class="form-row">
-          <div class="form-group col-md-6">
+          <div class="form-group col-md-6" id="info">
             {{form.city|as_crispy_field}}
           </div>
-          <div class="form-group col-md-4" id="state">
+          <div class="form-group col-md-4" id="info2">
             {{form.state|as_crispy_field}}
           </div>
-          <div class="form-group col-md-2">
-            {{form.zipcode|as_crispy_field}}
           </div>
+          
+
+
         </div>
         <div class="form-group">
           <div class="form-check">
@@ -57,64 +82,46 @@
             </label>
           </div>
         </div>
-        <button type="submit" class="btn btn-primary">Sign in</button>
+        <button type="submit" class="btn btn-primary" onclick='return confirm("Are You Sure to submit..!")'>Sign in</button>
       </form>
   
   </div>
-  
+  </div>
 </div>
 
+{% endblock content %} 
 
-
-<div class="container">
-  <div class="zipcode">
-      <input type="text" id="zipcode" value="" required>
-      <label for="zipcode">Zip code...</label>
-      <span class="indicator">
-          <i class="ri-close-circle-fill ri icon"></i>
-      </span>
-  </div>
-  <p class="info">Type valid zip code</p>
-  <p class="info2">Show</p>
-
-  </div> 
-
-
-{% endblock content %}
-
-{% block js %}
+{% block ajax %}
 <script>
-  var input = document.querySelector('#zipcode');
-  console.log(input)
-  var indicator = document.querySelector('.ri');
-  var info = document.querySelector('.info');
-  var info2 = document.querySelector('.info2');
+  var input = document.querySelector("#id_zipcode");
+  var indicator = document.querySelector(".ri");
+  var info = document.querySelector(".info");
+  var info2 = document.querySelector(".info2");
 
-  var codelength = /^\d{6}$/
+  var codelength = /^\d{6}$/;
 
-  input.addEventListener('keyup', () => {
-      if (input.value.match(codelength)) {
-          $.ajax({
-              type: "GET",
-              url: "https://api.postalpincode.in/pincode/" + input.value,
+  input.addEventListener("keyup", () => {
+    if (input.value.match(codelength)) {
+      $.ajax({
+        type: "GET",
+        url: "https://api.postalpincode.in/pincode/" + input.value,
 
-              success: (response) => {
-                  info.innerHTML = (response[0].PostOffice[0].Name);
-                  info2.innerHTML = (response[0].PostOffice[0].State);
+        success: (response) => {
+          console.log('response--->', response)
+          $("#id_city").val(response[0].PostOffice[0].Name)
+          $('#id_state').val(response[0].PostOffice[0].State)
+//          info.innerHTML = response[0].PostOffice[0].Name;
+//          info2.innerHTML = response[0].PostOffice[0].State;
+        },
+      });
 
-              }
-          });
-
-          indicator.classList.add('ri-checkbox-circle-fill');
-          indicator.classList.remove('ri-close-circle-fill');
-      }
-
-      else {
-          indicator.classList.add('ri-close-circle-fill');
-          indicator.classList.remove('ri-checkbox-circle-fill');
-          info.innerHTML = "Type valid zipcode";
-      }
-
-  }); 
+      indicator.classList.add("ri-checkbox-circle-fill");
+      indicator.classList.remove("ri-close-circle-fill");
+    } else {
+      indicator.classList.add("ri-close-circle-fill");
+      indicator.classList.remove("ri-checkbox-circle-fill");
+      info.innerHTML = "Type valid zipcode";
+    }
+  });
 </script>
-{% endblock js %}
+{% endblock ajax %}
