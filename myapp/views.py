@@ -8,6 +8,7 @@ from django.contrib.auth import authenticate, login, logout
 from .mixin import MessageHandler
 from .forms import DLForm
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 def login_view(request):
@@ -48,6 +49,8 @@ def otp(request,uid):
 
     return render(request,'otp.html')
 
+
+@login_required(login_url='/')
 def dashboard(request):
     return render(request,'dashboard.html')
 
@@ -59,15 +62,18 @@ def user_logout(request):
     return HttpResponseRedirect('/register/')
 
 
+@login_required(login_url='/')
 def driving_licence(request):
     if request.method == "POST":
-        form = DLForm(request.POST)
-        
+        form = DLForm(request.POST, request.FILES)
+
         if form.is_valid():
             form.save()            
             messages.success(request,'Data submit sucessfully..!')
             form = DLForm()
-        messages.error(request,'Data not submited..!')
+    
+        else:
+            messages.error(request,'Please..! fill the form.')
 
     else:
         form = DLForm()

@@ -2,6 +2,8 @@ from django.db import models
 from django.contrib.auth.models import User
 import uuid
 from django_resized import ResizedImageField
+from myapp.validators import validate_file_size
+from django.core.validators import MinLengthValidator
 
 
 # Create your models here.
@@ -15,6 +17,9 @@ class Profile(models.Model):
     mobile_no = models.CharField(max_length=20)
     otp = models.CharField(max_length=50, null=True, blank=True)
     uid = models.UUIDField(default=uuid.uuid4)
+
+    # def __str__(self) -> str:
+    #     return self.profile
     
 STATE_CHOICE = (
     ("Andhra Pradesh","Andhra Pradesh"),
@@ -64,3 +69,10 @@ class DirivingLicence(models.Model):
     state = models.CharField(choices=STATE_CHOICE,max_length=255,null=True, blank=True)
     zipcode = models.IntegerField() 
     image = ResizedImageField(upload_to='profile_pic',size=[500,300],crop=['middle','center'],force_format='JPEG')
+    file = models.FileField(upload_to="documents/%Y/%m/%d", validators=[validate_file_size])
+    comments = models.TextField(max_length=200,validators=[MinLengthValidator(20, 'the field must contain at least 20 characters')])
+    agree = models.BooleanField()
+
+    def __str__(self) -> str:
+        return self.first_name
+
